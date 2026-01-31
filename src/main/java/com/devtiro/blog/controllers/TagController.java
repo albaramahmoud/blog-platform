@@ -4,6 +4,7 @@ import com.devtiro.blog.dto.tags.CreateTagsRequest;
 import com.devtiro.blog.dto.tags.TagResponse;
 import com.devtiro.blog.services.TagService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,11 +15,11 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/api/v1/tags")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TagController {
 
 
-    TagService tagService;
+    private final TagService tagService;
 
     @GetMapping
     public ResponseEntity<List<TagResponse>> listTags() {

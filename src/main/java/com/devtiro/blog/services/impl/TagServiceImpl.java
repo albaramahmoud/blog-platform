@@ -22,10 +22,11 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<TagResponse> getTags() {
-        return tagRepo.findAll()
-                .stream()
-                .map(tagMapper::toDto)
-                .toList();
+        return tagRepo.findAllTagsWithCount();
+//        return tagRepo.findAllWithPostCount()
+//                .stream()
+//                .map(tagMapper::toDto)
+//                .toList();
     }
 
     @Transactional

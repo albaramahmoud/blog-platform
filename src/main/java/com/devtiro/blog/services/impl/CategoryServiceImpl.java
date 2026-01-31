@@ -24,11 +24,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> listCategories() {
-        List<Category> categories = categoryRepo.findAllWithPostCount();
+        return categoryRepo.findAllCategoriesWithCount();
 
-        return categories.stream()
-                .map(categoryMapper::toDto)
-                .toList();
+
+//        List<Category> categories = categoryRepo.findAllWithPostCount();
+//        return categories.stream()
+//                .map(categoryMapper::toDto)
+//                .toList();
     }
 
 

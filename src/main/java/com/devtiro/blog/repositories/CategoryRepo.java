@@ -1,5 +1,7 @@
 package com.devtiro.blog.repositories;
 
+import com.devtiro.blog.dto.categories.CategoryDto;
+import com.devtiro.blog.dto.tags.TagResponse;
 import com.devtiro.blog.entities.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +12,6 @@ import java.util.UUID;
 public interface CategoryRepo extends JpaRepository<Category, UUID> {
 
 
-    // if we use findAll() method there is well be N+1 problem
     @Query("SELECT c FROM Category c LEFT JOIN FETCH c.posts")
     List<Category> findAllWithPostCount();
 
@@ -18,4 +19,6 @@ public interface CategoryRepo extends JpaRepository<Category, UUID> {
 
     boolean existsCategoryById(UUID id);
 
+    @Query("SELECT new com.devtiro.blog.dto.categories.CategoryDto(c.id, c.name, CAST(SIZE(c.posts) as int)) FROM Category c")
+    List<CategoryDto> findAllCategoriesWithCount();
 }

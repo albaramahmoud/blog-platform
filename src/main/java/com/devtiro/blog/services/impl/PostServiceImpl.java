@@ -33,7 +33,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public List<PostDto> getPosts(UUID categoryId, UUID tagId) {
-        // FIX: Check if IDs are null before calling the repository
+
         Optional<Category> category = (categoryId != null) ? categoryRepo.findById(categoryId) : Optional.empty();
         Optional<Tag> tag = (tagId != null) ? tagRepo.findById(tagId) : Optional.empty();
 
