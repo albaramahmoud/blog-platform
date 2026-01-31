@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -14,33 +15,41 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Builder
 public class Category {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(nullable = false, unique = true)
-    String name;
+    private String name;
 
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,orphanRemoval = true)
-    @ToString.Exclude
-    @JsonIgnore
-    List<Post> posts = new ArrayList<>();
+    @OneToMany(mappedBy = "category")
+    private List<Post> posts = new ArrayList<>();
 
     public void addPost(Post post){
         posts.add(post);
         post.setCategory(this);
     }
-    public void removePost(Post post){
+
+    public void deletePost(Post post){
         posts.remove(post);
         post.setCategory(null);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return Objects.equals(id, category.id) && Objects.equals(name, category.name);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 
 }
