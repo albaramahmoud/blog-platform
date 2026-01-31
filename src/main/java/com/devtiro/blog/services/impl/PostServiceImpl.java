@@ -30,28 +30,35 @@ public class PostServiceImpl implements PostService {
     private final TagMapper tagMapper;
 
     private static final int CHARS_PER_MINUTE = 2000;
-
     @Override
     @Transactional(readOnly = true)
     public List<PostDto> getPosts(UUID categoryId, UUID tagId) {
-        Optional<Category> category = categoryRepo.findById(categoryId);
-        Optional<Tag> tag = tagRepo.findById(tagId);
+        // FIX: Check if IDs are null before calling the repository
+        Optional<Category> category = (categoryId != null) ? categoryRepo.findById(categoryId) : Optional.empty();
+        Optional<Tag> tag = (tagId != null) ? tagRepo.findById(tagId) : Optional.empty();
 
-        if(category.isPresent() && tag.isPresent()){
-            return postRepo.findAllByStatusAndCategoryAndTagsContaining
-                            (PostStatus.PUBLISHED, category.get(), tag.get())
+        if (categoryId != null && category.isEmpty()) {
+            throw new EntityNotFoundException("Category with id " + categoryId + " not found");
+        }
+        if (tagId != null && tag.isEmpty()) {
+            throw new EntityNotFoundException("Tag with id " + tagId + " not found");
+        }
+
+        if (category.isPresent() && tag.isPresent()) {
+            return postRepo.findAllByStatusAndCategoryAndTagsContaining(
+                            PostStatus.PUBLISHED, category.get(), tag.get())
                     .stream()
                     .map(postMapper::toDto)
                     .toList();
         } else if (category.isPresent()) {
-            return postRepo.findAllByStatusAndCategory
-                            (PostStatus.PUBLISHED, category.get())
+            return postRepo.findAllByStatusAndCategory(
+                            PostStatus.PUBLISHED, category.get())
                     .stream()
                     .map(postMapper::toDto)
                     .toList();
-        } else if (tag.isPresent()){
-            return postRepo.findAllByStatusAndTagsContaining
-                            (PostStatus.PUBLISHED, tag.get())
+        } else if (tag.isPresent()) {
+            return postRepo.findAllByStatusAndTagsContaining(
+                            PostStatus.PUBLISHED, tag.get())
                     .stream()
                     .map(postMapper::toDto)
                     .toList();
